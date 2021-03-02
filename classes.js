@@ -1,5 +1,6 @@
 class Event {
-    constructor(date, cost, type, name) {
+    constructor(id, date, cost, type, name) {
+      this.id = id;
       this.date = date;
       this.cost = cost;
       this.type = type;
@@ -13,6 +14,6 @@ class Event {
       this.login = login;
       this.password = password;
       this.cash = cash;
-      this.ifLogined = ifLogined;
+      this.ifLogined = false;
     }
   }
