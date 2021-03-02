@@ -1,4 +1,4 @@
-//Import the library into your project
+//odpal za pomocą node .\index.js damian_galinski rosolowa 91-121 lodz polska 30 opis 1
 var easyinvoice = require('easyinvoice');
 const FileSaver = require('file-saver');
 var fs = require('fs');
@@ -51,7 +51,8 @@ var data = {
     ],
     "bottomNotice": "Kindly pay your invoice within 14 days."
 };
- 
+console.log(price)
+console.log(quantity)
 //Create your invoice! Easy!
 easyinvoice.createInvoice(data, async function (result) {
     //The response will contain a base64 encoded PDF file
