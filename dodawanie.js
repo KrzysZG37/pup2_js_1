@@ -1,22 +1,25 @@
-app.get('/addUser/:login/:password/:cash', function(request, response) {
-    let user_table = read_db(user_db_path);
+const event_db_path = "./events_db.json";
+
+app.get('/addEvent/:id/:date/:cost/:type/:name', function(request, response) {
+    let event_table = read_db(user_db_path);
     let index_to_search = -1;
-    for (let index = 0; index < user_table.length; index++) {
-        const user = user_table[index];
-        if (user.login === request.params.login && user.password === request.params.password) {
+    for (let index = 0; index < event_table.length; index++) {
+        const user = event_table[index];
+        if (user.id === request.params.id) {
             index_to_search = index;
         }   
     }
     if (index_to_search === -1) {
-      let login = request.params.login;
-      let password = request.params.passsword;
-      let cash = request.params.cash;
-      let user = new User(login,password,cash);
-      user_table.push(user);
-      fs.writeJsonSync(user_db_path, user_table);
-      return response.send("User " + login + " added succesfully");
+      let id = request.params.id;
+      let date = request.params.date;
+      let cost = request.params.cost;
+      let type = request.params.type;
+      let name = request.params.name
+      let event = new Event(id, date, cost, type, name);
+      event_table.push(event);
+      fs.writeJsonSync(event_db_path, event_table);
+      return response.send("Event " + id + " added succesfully");
     } else {
-      return response.send("User " + login + " already exists in db");
+      return response.send("Event " + id + " already exists in db");
     }
 });
-
