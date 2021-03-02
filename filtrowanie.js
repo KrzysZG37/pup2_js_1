@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-
+Events = "C:/Users/uczen/Desktop/PC/JS/pup2_js_1/events_db.json"
 
 app.get('/filtrEventById/<id>', function(request, response) {
     let eventTable = utils.readDb(Events)
