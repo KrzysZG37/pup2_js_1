@@ -10,10 +10,11 @@ class Event {
 
 
   class User {
-    constructor(login, password, cash, ifLogined) {
+    constructor(login, password, cash, ifLogined, signedEvents) {
       this.login = login;
       this.password = password;
       this.cash = cash;
       this.ifLogined = false;
+      this,signedEvents = []
     }
   }
