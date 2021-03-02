@@ -17,7 +17,7 @@ app.get('/addEvent/:id/:date/:cost/:type/:name', function(request, response) {
       let name = request.params.name
       let event = new Event(id, date, cost, type, name);
       event_table.push(event);
-      fs.writeJsonSync(event_db_path, event_table);
+      fsExtra.writeJsonSync(event_db_path, event_table);
       return response.send("Event " + id + " added succesfully");
     } else {
       return response.send("Event " + id + " already exists in db");
