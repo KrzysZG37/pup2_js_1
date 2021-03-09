@@ -92,8 +92,8 @@ app.get('/addEvent/:id/:date/:cost/:type/:name', function(request, response) {
 
 
 const DATABASE_HOST='localhost';
-const DATABASE_USER='admin';
-const DATABASE_PASSWORD='admin';
+const DATABASE_USER='root';
+const DATABASE_PASSWORD='root';
 const DATABASE_NAME='baza';
 
 const db = mysql.createConnection({
@@ -121,7 +121,7 @@ app.get('/showEventById/:id', (request, response) => {
     }) 
 })
 
-main().catch(console.error);
+
 
 //Można Edytować wszystko po za nazwą eventu bo nie ma id eventu a musi rozpoznawać event
 app.get('/editEvent/:name/:cost/:type/:date', function(request, response) {
