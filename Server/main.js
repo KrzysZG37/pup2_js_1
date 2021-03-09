@@ -1,4 +1,5 @@
 // STWORZENIE SERWERA RESTOWEGO W EXPRESS.JS
+const mysql = require('mysql');
 let express = require("express");
 const fs = require("fs-extra");
 let bodyParser = require('body-parser');
@@ -14,6 +15,8 @@ const FileSaver = require('file-saver');
 
 const users_db_path = "./users_db.json";
 const events_db_path = "./events_db.json";
+
+Events = "./events_db.json"
 
 class Event {
     constructor(date, cost, type, name) {
@@ -88,19 +91,40 @@ app.get('/addEvent/:id/:date/:cost/:type/:name', function(request, response) {
     }
 });
 
-Events = "./events_db.json"
 
-app.get('/filtrEventById/<id>', function(request, response) {
-    let eventTable = utils.readDb(Events)
-    for (let i = 0; i < eventTable.length; i++) {
-        const element = eventTable[i];
-        if (eventTable['id'] == request.params.id) {
-            return response.send(element)
-        }
-    }
-    return response.send('no such id')
 
+
+const DATABASE_HOST='localhost';
+const DATABASE_USER='admin';
+const DATABASE_PASSWORD='admin';
+const DATABASE_NAME='baza';
+
+const db = mysql.createConnection({
+    host: DATABASE_HOST,
+    user: DATABASE_USER,
+    password: DATABASE_PASSWORD,
+    database: DATABASE_NAME
 })
+
+
+db.connect((err) => {
+    if(err){
+        throw err
+    }
+    console.log('MySql connected')
+})
+
+
+app.get('/showEventById/:id', (request, response) => {
+    let id = request.params.id
+    let sql = 'Select * from event where idEvent = ' +  mysql.escape(id)
+    db.query(sql, (err, result) => {
+        if (err) throw err
+        response.send(response)
+    }) 
+})
+
+main().catch(console.error);
 
 //Można Edytować wszystko po za nazwą eventu bo nie ma id eventu a musi rozpoznawać event
 app.get('/editEvent/:name/:cost/:type/:date', function(request, response) {
