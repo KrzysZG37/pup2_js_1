@@ -1,9 +1,9 @@
-const mysql = require('mysql');
+
 const express = require('express');
 const { request } = require('node:http');
 const { response } = require('express');
 
-
+const mysql = require('mysql');
 const DATABASE_HOST='localhost';
 const DATABASE_USER='admin';
 const DATABASE_PASSWORD='admin';
@@ -36,13 +36,8 @@ app.get('/showEventById/<id>', (request, response) => {
 
 
 
-
+main().catch(console.error);
 
 app.listen('3000', () => {
     console.log('Server started on port 3000')
 })
-
-
-
-
-main().catch(console.error);
