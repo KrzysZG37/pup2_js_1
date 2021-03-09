@@ -88,7 +88,7 @@ app.get('/addEvent/:id/:date/:cost/:type/:name', function(request, response) {
     }
 });
 
-Events = "C:/Users/uczen/Desktop/PC/JS/pup2_js_1/Server/events_db.json"
+Events = "./events_db.json"
 
 app.get('/filtrEventById/<id>', function(request, response) {
     let eventTable = utils.readDb(Events)
@@ -119,18 +119,8 @@ app.get('/editEvent/:name/:cost/:type/:date', function(request, response) {
 });
 
 
-company = process.argv[2]
-address = process.argv[3]
-zip = process.argv[4]
-city = process.argv[5]
-country = process.argv[6]
-quantity = process.argv[7]
-description = process.argv[8]
-price = process.argv[9]
-invoiceNumber = process.argv[10]
 
-
-function generateInvoice(company,address,zip,city,country,quantity,description,price,invoiceNumber){
+app.get('/addInvoice/:company/:address/:zip/:city/:country/:quantity/:description/:price/:invoiceNumber', function(request, response) {
     var data = {
         "documentTitle": "FAKTURA",
         "currency": "PLN",
@@ -148,20 +138,20 @@ function generateInvoice(company,address,zip,city,country,quantity,description,p
             "country": "Polska"
         },
         "client": {
-            "company": company,
-            "address": address,
-            "zip": zip,
-            "city": city,
-            "country": country
+            "company": request.params.company,
+            "address": request.params.address,
+            "zip": request.params.zip,
+            "city": request.params.city,
+            "country": request.params.country
         },
-        "invoiceNumber": invoiceNumber,
+        "invoiceNumber": request.params.invoiceNumber,
         "invoiceDate": "02-03-2021",
         "products": [
             {
-                "quantity": quantity,
-                "description": description,
+                "quantity": request.params.quantity,
+                "description": request.params.description,
                 "tax": 6,
-                "price": price
+                "price": request.params.price
             },
         ],
         "bottomNotice": "Kindly pay your invoice within 14 days."
@@ -172,8 +162,11 @@ function generateInvoice(company,address,zip,city,country,quantity,description,p
 
         await fs.writeFileSync("invoice.pdf",result.pdf,'base64');
 
-    });}
-generateInvoice(company,address,zip,city,country,quantity,description,price,invoiceNumber)
+    return response.send("ivoice created");
+    })
+});
+
+
 
 app.listen(3000, function() { // odpalenie serwera i nasłuchiwanie na port 3000
     console.log('Server is listening on port 3000'); 
