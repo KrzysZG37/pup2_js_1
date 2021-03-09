@@ -165,7 +165,7 @@ app.get('/addInvoice/:company/:address/:zip/:city/:country/:quantity/:descriptio
     return response.send("ivoice created");
     })
 });
-
+;
 
 
 app.listen(3000, function() { // odpalenie serwera i nasłuchiwanie na port 3000
