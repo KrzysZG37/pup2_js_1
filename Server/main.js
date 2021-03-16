@@ -16,6 +16,8 @@ const FileSaver = require('file-saver');
 const users_db_path = "./users_db.json";
 const events_db_path = "./events_db.json";
 
+Events = "./events_db.json"
+
 class Event {
     constructor(date, cost, type, name) {
       this.date = date;
@@ -65,28 +67,17 @@ app.get("/logIn/:login/:password/:ifLogined", function(request, response) {
     }
 });
 
-app.get('/addEvent/:id/:date/:cost/:type/:name', function(request, response) {
-    let event_table = read_db(user_db_path);
-    let index_to_search = -1;
-    for (let index = 0; index < event_table.length; index++) {
-        const user = event_table[index];
-        if (user.id === request.params.id) {
-            index_to_search = index;
-        }   
-    }
-    if (index_to_search === -1) {
-      let id = request.params.id;
-      let date = request.params.date;
-      let cost = request.params.cost;
-      let type = request.params.type;
-      let name = request.params.name
-      let event = new Event(id, date, cost, type, name);
-      event_table.push(event);
-      fsExtra.writeJsonSync(event_db_path, event_table);
-      return response.send("Event " + id + " added succesfully");
-    } else {
-      return response.send("Event " + id + " already exists in db");
-    }
+app.get('/addEvent/:id/:date/:cost/:type/:name', (request, response) => {
+    let id = request.params.id
+    let date = request.params.date
+    let cost = request.params.cost
+    let type = request.params.type
+    let name = request.params.name
+    var sql = "INSERT INTO event (id,date,cost,type,name)(id =?,name =?, cost=?, type=?, date=?)";
+    db.query(sql,[mysql.escape(id),mysql.escape(name),mysql.escape(cost),mysql.escape(type),mysql.escape(date)], function (err, result) {
+      if (err) throw err;
+      console.log(result.affectedRows + " record(s) added successfully");
+    });
 });
 
 
@@ -123,36 +114,25 @@ app.get('/showEventById/:id', (request, response) => {
 })
 
 
-
-//Można Edytować wszystko po za nazwą eventu bo nie ma id eventu a musi rozpoznawać event
-app.get('/editEvent/:name/:cost/:type/:date', function(request, response) {
-    let events_table = readDb(events_db_path)
-    for (let index = 0; index < events_table.length; index++) {
-        const event = events_table[index];
-        if (event.name === request.params.name){
-            event.cost = request.params.cost;
-            event.type = request.params.type;
-            event.date = request.params.date;
-            saveToDb(events_db_path, events_table);
-            return response.send("Event edited successfully");
-        }
-    }
-    return response.send("No such event found");
 });
 
+ app.get('/editEvent/:id/:name/:cost/:type/:date', (request, response) => {
+    let id = request.params.id
+    let name = request.params.name
+    let cost = request.params.cost
+    let type = request.params.type
+    let date = request.params.date
+    var sql = "UPDATE event SET name =?, cost=?, type=?, date=? WHERE idEvent =" + mysql.escape(id);
+    db.query(sql,[mysql.escape(name),mysql.escape(cost),mysql.escape(type),mysql.escape(date)], function (err, result) {
+      if (err) throw err;
+      console.log(result.affectedRows + " record(s) updated");
+    });
+});
 
-company = process.argv[2]
-address = process.argv[3]
-zip = process.argv[4]
-city = process.argv[5]
-country = process.argv[6]
-quantity = process.argv[7]
-description = process.argv[8]
-price = process.argv[9]
-invoiceNumber = process.argv[10]
+main().catch(console.error);
 
 
-function generateInvoice(company,address,zip,city,country,quantity,description,price,invoiceNumber){
+app.get('/addInvoice/:company/:address/:zip/:city/:country/:quantity/:description/:price/:invoiceNumber', function(request, response) {
     var data = {
         "documentTitle": "FAKTURA",
         "currency": "PLN",
@@ -170,20 +150,20 @@ function generateInvoice(company,address,zip,city,country,quantity,description,p
             "country": "Polska"
         },
         "client": {
-            "company": company,
-            "address": address,
-            "zip": zip,
-            "city": city,
-            "country": country
+            "company": request.params.company,
+            "address": request.params.address,
+            "zip": request.params.zip,
+            "city": request.params.city,
+            "country": request.params.country
         },
-        "invoiceNumber": invoiceNumber,
+        "invoiceNumber": request.params.invoiceNumber,
         "invoiceDate": "02-03-2021",
         "products": [
             {
-                "quantity": quantity,
-                "description": description,
+                "quantity": request.params.quantity,
+                "description": request.params.description,
                 "tax": 6,
-                "price": price
+                "price": request.params.price
             },
         ],
         "bottomNotice": "Kindly pay your invoice within 14 days."
@@ -194,8 +174,11 @@ function generateInvoice(company,address,zip,city,country,quantity,description,p
 
         await fs.writeFileSync("invoice.pdf",result.pdf,'base64');
 
-    });}
-generateInvoice(company,address,zip,city,country,quantity,description,price,invoiceNumber)
+    return response.send("ivoice created");
+    })
+});
+;
+
 
 app.listen(3000, function() { // odpalenie serwera i nasłuchiwanie na port 3000
     console.log('Server is listening on port 3000'); 
