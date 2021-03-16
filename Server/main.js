@@ -83,8 +83,8 @@ app.get('/addEvent/:id/:date/:cost/:type/:name', (request, response) => {
 
 
 const DATABASE_HOST='localhost';
-const DATABASE_USER='admin';
-const DATABASE_PASSWORD='admin';
+const DATABASE_USER='root';
+const DATABASE_PASSWORD='root';
 const DATABASE_NAME='baza';
 
 const db = mysql.createConnection({
@@ -105,20 +105,15 @@ db.connect((err) => {
 
 app.get('/showEventById/:id', (request, response) => {
     let id = request.params.id
-    let sql = 'Select * from event where idEvent = ' +  mysql.escape(id)
-    db.query(sql, (err, result) => {
+    let sql = 'Select * from event where idEvent = ?'
+    db.query(sql,id, (err, result) => {
         if (err) throw err
-        response.send(response)
+        console.log(result)
+        return response.send(result)
     }) 
 })
 
-app.get('/deleteEvent/:id', (request, response) => {
-    let id = request.params.id
-    let sql = 'DELETE FROM event WHERE idEvent = ' + mysql.escape(id);
-    db.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log("Number of records deleted: " + result.affectedRows);
-    });
+
 });
 
  app.get('/editEvent/:id/:name/:cost/:type/:date', (request, response) => {
