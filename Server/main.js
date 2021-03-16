@@ -112,24 +112,29 @@ app.get('/showEventById/:id', (request, response) => {
     }) 
 })
 
-main().catch(console.error);
-
-//Można Edytować wszystko po za nazwą eventu bo nie ma id eventu a musi rozpoznawać event
-app.get('/editEvent/:name/:cost/:type/:date', function(request, response) {
-    let events_table = readDb(events_db_path)
-    for (let index = 0; index < events_table.length; index++) {
-        const event = events_table[index];
-        if (event.name === request.params.name){
-            event.cost = request.params.cost;
-            event.type = request.params.type;
-            event.date = request.params.date;
-            saveToDb(events_db_path, events_table);
-            return response.send("Event edited successfully");
-        }
-    }
-    return response.send("No such event found");
+app.get('/deleteEvent/:id', (request, response) => {
+    let id = request.params.id
+    let sql = 'DELETE FROM event WHERE idEvent = ' + mysql.escape(id);
+    db.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("Number of records deleted: " + result.affectedRows);
+    });
 });
 
+ app.get('/editEvent/:id/:name/:cost/:type/:date', (request, response) => {
+    let id = request.params.id
+    let name = request.params.name
+    let cost = request.params.cost
+    let type = request.params.type
+    let date = request.params.date
+    var sql = "UPDATE event SET name =?, cost=?, type=?, date=? WHERE idEvent =" + mysql.escape(id);
+    db.query(sql,[mysql.escape(name),mysql.escape(cost),mysql.escape(type),mysql.escape(date)], function (err, result) {
+      if (err) throw err;
+      console.log(result.affectedRows + " record(s) updated");
+    });
+});
+
+main().catch(console.error);
 
 
 app.get('/addInvoice/:company/:address/:zip/:city/:country/:quantity/:description/:price/:invoiceNumber', function(request, response) {
