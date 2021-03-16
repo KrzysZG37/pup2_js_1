@@ -114,10 +114,11 @@ db.connect((err) => {
 
 app.get('/showEventById/:id', (request, response) => {
     let id = request.params.id
-    let sql = 'Select * from event where idEvent = ' +  mysql.escape(id)
-    db.query(sql, (err, result) => {
+    let sql = 'Select * from event where idEvent = ?'
+    db.query(sql,id, (err, result) => {
         if (err) throw err
-        response.send(response)
+        console.log(result)
+        return response.send(result)
     }) 
 })
 
