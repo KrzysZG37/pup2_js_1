@@ -67,30 +67,18 @@ app.get("/logIn/:login/:password/:ifLogined", function(request, response) {
     }
 });
 
-app.get('/addEvent/:id/:date/:cost/:type/:name', function(request, response) {
-    let event_table = read_db(user_db_path);
-    let index_to_search = -1;
-    for (let index = 0; index < event_table.length; index++) {
-        const user = event_table[index];
-        if (user.id === request.params.id) {
-            index_to_search = index;
-        }   
-    }
-    if (index_to_search === -1) {
-      let id = request.params.id;
-      let date = request.params.date;
-      let cost = request.params.cost;
-      let type = request.params.type;
-      let name = request.params.name
-      let event = new Event(id, date, cost, type, name);
-      event_table.push(event);
-      fsExtra.writeJsonSync(event_db_path, event_table);
-      return response.send("Event " + id + " added succesfully");
-    } else {
-      return response.send("Event " + id + " already exists in db");
-    }
+app.get('/addEvent/:id/:date/:cost/:type/:name', (request, response) => {
+    let id = request.params.id
+    let date = request.params.date
+    let cost = request.params.cost
+    let type = request.params.type
+    let name = request.params.name
+    var sql = "INSERT INTO event (id,date,cost,type,name)(id =?,name =?, cost=?, type=?, date=?)";
+    db.query(sql,[mysql.escape(id),mysql.escape(name),mysql.escape(cost),mysql.escape(type),mysql.escape(date)], function (err, result) {
+      if (err) throw err;
+      console.log(result.affectedRows + " record(s) added successfully");
+    });
 });
-
 
 
 
